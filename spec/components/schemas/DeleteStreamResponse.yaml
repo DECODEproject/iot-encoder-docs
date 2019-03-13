@@ -1,0 +1,2 @@
+description: Response sent on successfully deleting a stream
+type: object

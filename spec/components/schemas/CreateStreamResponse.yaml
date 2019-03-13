@@ -1,0 +1,7 @@
+description: Response returned by the encoder on successful stream creation
+type: object
+properties:
+  stream_uid:
+    $ref: '#/components/schemas/StreamUid'
+  token:
+    $ref: '#/components/schemas/Token'

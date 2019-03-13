@@ -1,0 +1,54 @@
+post:
+  tags:
+    - Create Stream
+  summary: Create encrypted stream
+  description: >
+    This endpoint is the method by which a user taking part in the pilot uses
+    their app to create an encrypted stream or streams for a device.
+
+
+    The request includes the set of operations defined for the policy, as well
+    as the public key of the community.
+  parameters:
+    - in: header
+      name: Content-Type
+      schema:
+        type: string
+        enum:
+          - application/json
+      required: true
+  responses:
+    '200':
+      description: Successful stream creation response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateStreamResponse'
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: bad_request
+            msg: device_token is required
+            meta:
+              argument: device_token
+    5XX:
+      description: Unexpected server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: internal
+            msg: database is unavailable
+            meta:
+              cause: '*pg.Error: unable to connect to the database'
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/CreateStreamRequest'
+    required: true
