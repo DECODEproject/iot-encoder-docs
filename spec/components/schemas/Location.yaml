@@ -1,0 +1,16 @@
+description: The location of the device expressed as a decimal lat/long
+type: object
+properties:
+  longitude:
+    type: number
+    format: float
+    description: The longitude of the device expressed as a decimal
+    example: 2.1462
+  latitude:
+    type: number
+    format: float
+    description: The latitude of the device expressed as a decimal
+    example: 54.1852
+required:
+  - longitude
+  - latitude

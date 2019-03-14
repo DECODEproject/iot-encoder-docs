@@ -1,0 +1,8 @@
+
+apiTitle: DECODE IoT Encoder
+splitSpec: true
+codeSamples: false
+swaggerUI: true
+travis: true
+repo: DECODEproject/iot-encoder-docs
+oasVersion: 3.0.0

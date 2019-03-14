@@ -1,0 +1,7 @@
+description: Label describing the type of processing to perform for this operation
+type: string
+enum:
+  - SHARE
+  - BIN
+  - MOVING_AVG
+example: BIN

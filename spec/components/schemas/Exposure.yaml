@@ -1,0 +1,6 @@
+description: 'The exposure of the device, i.e. is it indoors or outdoors'
+type: string
+enum:
+  - INDOOR
+  - OUTDOOR
+example: INDOOR

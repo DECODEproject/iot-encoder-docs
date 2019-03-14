@@ -1,0 +1,289 @@
+openapi: 3.0.0
+info:
+  version: 0.4.0
+  title: DECODE IoT Encoder
+  contact:
+    email: info@thingful.net
+  license:
+    name: GNU Affero General Public License
+    url: 'https://www.gnu.org/licenses/agpl.html'
+  x-logo:
+    url: 'https://decodeproject.eu/sites/default/files/favicon_13.png'
+  description: |
+    This is some documentation for the Stream Encoder component developed
+    as part of the IoT pilot
+    for [DECODE](https://decodeproject.eu).
+
+    # Introduction
+    The purpose of this component is to provide a service that creates encrypted streams for data being published via SmartCitizen's MQTT broker. These encrypted streams are then written to the encrypted datastore where they may be consumed by a client with valid credentials. In our case this client will be the BCNNow dashboard which will use the data to create neighbourhood dashboards.
+tags:
+  - name: Create Stream
+    description: Create encrypted streams
+  - name: Delete Stream
+    description: Delete encrypted streams
+servers:
+  - url: 'https://encoder.decode.smartcitizen.me/twirp/decode.iot.encoder.Encoder/'
+paths:
+  /CreateStream:
+    post:
+      tags:
+        - Create Stream
+      summary: Create encrypted stream
+      description: |
+        This endpoint is the method by which a user taking part in the pilot uses their app to create an encrypted stream or streams for a device.
+
+        The request includes the set of operations defined for the policy, as well as the public key of the community.
+      parameters:
+        - in: header
+          name: Content-Type
+          schema:
+            type: string
+            enum:
+              - application/json
+          required: true
+      responses:
+        '200':
+          description: Successful stream creation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateStreamResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: bad_request
+                msg: device_token is required
+                meta:
+                  argument: device_token
+        5XX:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: internal
+                msg: database is unavailable
+                meta:
+                  cause: '*pg.Error: unable to connect to the database'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateStreamRequest'
+        required: true
+  /DeleteStream:
+    post:
+      tags:
+        - Delete Stream
+      summary: Delete encrypted stream
+      description: |
+        This endpoint is the means by which a user can delete a previously created encrypted stream provided they know the stream UID and secret token.
+      parameters:
+        - in: header
+          name: Content-Type
+          schema:
+            type: string
+            enum:
+              - application/json
+          required: true
+      responses:
+        '200':
+          description: Successful deletion response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteStreamResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: bad_request
+                msg: stream_uid is required
+                meta:
+                  argument: stream_uid
+        5XX:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: internal
+                msg: database is unavailable
+                meta:
+                  cause: '*pg.Error: unable to connect to the database'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteStreamRequest'
+        required: true
+components:
+  schemas:
+    Action:
+      description: Label describing the type of processing to perform for this operation
+      type: string
+      enum:
+        - SHARE
+        - BIN
+        - MOVING_AVG
+      example: BIN
+    Bins:
+      description: |
+        An array containing a list of float values that define a set of bins into
+        which values should be classified. Each elemnet in the list is the upper
+        inclusive boundary of a bin. The values must be sorted in strictly increasing
+        order. It is an error to include this parameter unless the action is `BIN`.
+      type: array
+      items:
+        type: number
+        format: float
+      example:
+        - 30
+        - 60
+        - 90
+    CommunityID:
+      description: Unique identifier for a community
+      type: string
+      example: 75cc5aa0-5a2f-413a-add8-39fcdc94ca8b
+    CreateStreamRequest:
+      description: Request sent to the service to create a new encrypted stream
+      type: object
+      properties:
+        device_token:
+          $ref: '#/components/schemas/DeviceToken'
+        community_id:
+          $ref: '#/components/schemas/CommunityID'
+        recipient_public_key:
+          $ref: '#/components/schemas/RecipientPublicKey'
+        location:
+          $ref: '#/components/schemas/Location'
+        exposure:
+          $ref: '#/components/schemas/Exposure'
+        operations:
+          description: An array of operations the policy defines
+          type: array
+          items:
+            $ref: '#/components/schemas/Operation'
+      required:
+        - device_token
+        - community_id
+        - recipient_public_key
+        - location
+        - exposure
+    CreateStreamResponse:
+      description: Response returned by the encoder on successful stream creation
+      type: object
+      properties:
+        stream_uid:
+          $ref: '#/components/schemas/StreamUid'
+        token:
+          $ref: '#/components/schemas/Token'
+    DeleteStreamRequest:
+      description: Request sent to the service to delete an existing encrypted stream
+      type: object
+      properties:
+        stream_uid:
+          $ref: '#/components/schemas/StreamUid'
+        token:
+          $ref: '#/components/schemas/Token'
+      required:
+        - stream_uid
+        - token
+    DeleteStreamResponse:
+      description: Response sent on successfully deleting a stream
+      type: object
+    DeviceToken:
+      description: Unique identifier for a device provided by SmartCitizen
+      type: string
+      example: ef00d19
+    Error:
+      description: Error message returned by the API
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/ErrorCode'
+        msg:
+          type: string
+          description: Short message describing the error
+        meta:
+          type: object
+          description: |
+            Object containing key/value pairs of metadata describing the error in more detail
+    ErrorCode:
+      type: string
+      description: String indicating the type of the error
+      enum:
+        - internal
+        - bad_request
+        - unknown
+        - invalid_argument
+        - not_found
+        - unavailable
+    Exposure:
+      description: 'The exposure of the device, i.e. is it indoors or outdoors'
+      type: string
+      enum:
+        - INDOOR
+        - OUTDOOR
+      example: INDOOR
+    Interval:
+      description: The interval in seconds over which the moving average should be calculated. It is an error to include this value unless the action for the operation is `MOVING_AVG`
+      type: integer
+      example: 900
+    Location:
+      description: The location of the device expressed as a decimal lat/long
+      type: object
+      properties:
+        longitude:
+          type: number
+          format: float
+          description: The longitude of the device expressed as a decimal
+          example: 2.1462
+        latitude:
+          type: number
+          format: float
+          description: The latitude of the device expressed as a decimal
+          example: 54.1852
+      required:
+        - longitude
+        - latitude
+    Operation:
+      description: An operation to apply to a sensor variable
+      type: object
+      properties:
+        sensor_id:
+          $ref: '#/components/schemas/SensorId'
+        action:
+          $ref: '#/components/schemas/Action'
+        bins:
+          $ref: '#/components/schemas/Bins'
+        interval:
+          $ref: '#/components/schemas/Interval'
+      required:
+        - sensor_id
+        - action
+    RecipientPublicKey:
+      description: Public key of the community for which data will be encrypted
+      type: string
+      example: BEXnaTo0oZOrpNEwhzxdbn7Kr9xyV4c5qjfZ6AqlJMGioZXg8Mo46v9I+HCSBBRorC3foGLv0B6jGgPGuafFi+qJezA+RfoRee0tz/IODL8iQFTwIcKKcpcuuKQBnXcIrg==
+    SensorId:
+      description: Numerical ID of a sensor as defined by SmartCitizen
+      type: integer
+      example: 55
+    StreamUid:
+      description: Unique identifier generated by the encoder for the stream
+      type: string
+      example: d5eae59b-050f-4f64-bf8c-4c9b7e39ff9a
+    Token:
+      description: Random token generated by the encoder for the stream. Must be stored in the user's app in order to delete the stream
+      type: string
+      example: isM4wxuUH3JDrUOg7WvDBdHx4mQiMyW4A3h0Amfzg2I=

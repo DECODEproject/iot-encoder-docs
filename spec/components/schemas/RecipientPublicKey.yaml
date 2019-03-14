@@ -1,0 +1,4 @@
+description: Public key of the community for which data will be encrypted
+type: string
+example: >-
+  BEXnaTo0oZOrpNEwhzxdbn7Kr9xyV4c5qjfZ6AqlJMGioZXg8Mo46v9I+HCSBBRorC3foGLv0B6jGgPGuafFi+qJezA+RfoRee0tz/IODL8iQFTwIcKKcpcuuKQBnXcIrg==

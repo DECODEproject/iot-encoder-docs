@@ -1,0 +1,34 @@
+openapi: 3.0.0
+info:
+  version: 0.4.0
+  title: DECODE IoT Encoder
+  contact:
+    email: info@thingful.net
+  license:
+    name: GNU Affero General Public License
+    url: 'https://www.gnu.org/licenses/agpl.html'
+  x-logo:
+    url: 'https://decodeproject.eu/sites/default/files/favicon_13.png'
+  description: >
+    This is some documentation for the Stream Encoder component developed
+
+    as part of the IoT pilot
+
+    for [DECODE](https://decodeproject.eu).
+
+
+    # Introduction
+
+    The purpose of this component is to provide a service that creates encrypted
+    streams for data being published via SmartCitizen's MQTT broker. These
+    encrypted streams are then written to the encrypted datastore where they may
+    be consumed by a client with valid credentials. In our case this client will
+    be the BCNNow dashboard which will use the data to create neighbourhood
+    dashboards.
+tags:
+  - name: Create Stream
+    description: Create encrypted streams
+  - name: Delete Stream
+    description: Delete encrypted streams
+servers:
+  - url: 'https://encoder.decode.smartcitizen.me/twirp/decode.iot.encoder.Encoder/'

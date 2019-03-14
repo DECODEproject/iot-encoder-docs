@@ -1,0 +1,3 @@
+description: Unique identifier for a device provided by SmartCitizen
+type: string
+example: ef00d19

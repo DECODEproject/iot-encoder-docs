@@ -1,0 +1,50 @@
+post:
+  tags:
+    - Delete Stream
+  summary: Delete encrypted stream
+  description: >
+    This endpoint is the means by which a user can delete a previously created
+    encrypted stream provided they know the stream UID and secret token.
+  parameters:
+    - in: header
+      name: Content-Type
+      schema:
+        type: string
+        enum:
+          - application/json
+      required: true
+  responses:
+    '200':
+      description: Successful deletion response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DeleteStreamResponse'
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: bad_request
+            msg: stream_uid is required
+            meta:
+              argument: stream_uid
+    5XX:
+      description: Unexpected server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: internal
+            msg: database is unavailable
+            meta:
+              cause: '*pg.Error: unable to connect to the database'
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/DeleteStreamRequest'
+    required: true

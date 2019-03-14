@@ -1,0 +1,10 @@
+description: Request sent to the service to delete an existing encrypted stream
+type: object
+properties:
+  stream_uid:
+    $ref: '#/components/schemas/StreamUid'
+  token:
+    $ref: '#/components/schemas/Token'
+required:
+  - stream_uid
+  - token

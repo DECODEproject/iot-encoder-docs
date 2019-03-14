@@ -1,0 +1,24 @@
+description: Request sent to the service to create a new encrypted stream
+type: object
+properties:
+  device_token:
+    $ref: '#/components/schemas/DeviceToken'
+  community_id:
+    $ref: '#/components/schemas/CommunityID'
+  recipient_public_key:
+    $ref: '#/components/schemas/RecipientPublicKey'
+  location:
+    $ref: '#/components/schemas/Location'
+  exposure:
+    $ref: '#/components/schemas/Exposure'
+  operations:
+    description: An array of operations the policy defines
+    type: array
+    items:
+      $ref: '#/components/schemas/Operation'
+required:
+  - device_token
+  - community_id
+  - recipient_public_key
+  - location
+  - exposure
