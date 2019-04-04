@@ -1,3 +1,6 @@
-description: Numerical ID of a sensor as defined by SmartCitizen
+description: >
+  Numerical ID of a sensor as defined by SmartCitizen. The meaning of each
+  number can be obtained by querying SmartCitizen's sensor endpoint:
+  https://api.smartcitizen.me/v0/sensors?per_page=1000
 type: integer
 example: 55

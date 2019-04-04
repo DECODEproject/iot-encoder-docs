@@ -31,4 +31,4 @@ tags:
   - name: Delete Stream
     description: Delete encrypted streams
 servers:
-  - url: 'https://encoder.decode.smartcitizen.me/twirp/decode.iot.encoder.Encoder/'
+  - url: 'https://encoder.decodeproject.eu/twirp/decode.iot.encoder.Encoder/'
